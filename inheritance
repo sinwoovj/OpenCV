@@ -1,0 +1,10 @@
+import os
+os.system('clear')
+
+print(os.getcwd())
+
+path = '/Users/sinwo/data.txt'
+fp = open(path) 
+str = fp.read()
+print(str, end='')
+fp.close()
