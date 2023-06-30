@@ -16,7 +16,7 @@ def order_points(pts):
     return rect
 
 # 1. Edge detection
-image = cv2.imread("namecard.png")
+image = cv2.imread("bssm.png")
 orig = image.copy()
 
 cv2.imshow("original", orig)
@@ -51,3 +51,22 @@ rect = order_points(screenCnt.reshape(4,2) / ratio)
 w1 = abs(bottomRight[0] - bottomLeft[0])
 w2 = abs(topRight[0] - topLeft[0])
 
+h2 = abs(topRight[1] - bottomRight[1])
+h1 = abs(topLeft[1] - bottomLeft[0])
+
+maxWidth = int(max([w1, w2]))
+maxHeight = int(max([h1, h2]))
+
+dst = np.float32([[0,0], [maxWidth-1,0], [maxWidth-1, maxHeight-1], [0, maxHeight-1]])
+M = cv2.getPerspectiveTransform(rect, dst)
+
+warped = cv2.warpPerspective(orig, M, (maxWidth, maxHeight))
+
+# 4. apply adaptive threshold
+warped = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
+warped = cv2.adaptiveThreshold(warped, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 21, 10)
+
+cv2. imshow("warped", warped)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
